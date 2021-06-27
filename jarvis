@@ -1,0 +1,76 @@
+import datetime
+import webbrowser
+import speech_recognition as sr
+import pyttsx3
+import os
+import random
+import datetime
+
+
+engine = pyttsx3.init('sapi5')
+voices = engine.getProperty('voices')
+engine.setProperty('voices',voices[0].id)
+
+
+def speak(audio):
+    engine.say(audio)
+    engine.runAndWait()
+
+def wish():
+    hour = int(datetime.datetime.now().hour)
+    if hour>0 and hour<12:
+        speak("Good morning sir")
+    elif hour>12 and hour<18:
+        speak("Good afternoon sir")
+    elif hour>18 and hour<24:
+        speak("Good evening sir")
+    speak("Hello sir I am jarvis ,your personal assistant ! please say what can i do for you")
+
+
+if __name__ == '__main__':
+        wish()
+def Takecommand():
+        r = sr.Recognizer()
+        with sr.Microphone() as source:
+            r.pause_threshold = 1
+            print("Listening...")
+            audio = r.listen(source)
+        try:
+            print("recognising...")
+            query =  r.recognize_google(audio,language='en-in')
+            print(f"user said:{query}\n")
+        except Exception as e:
+            print(e)
+            speak("Sorry sir i didn't understand, please say again...")
+            return 'none'
+        return query
+
+q = Takecommand().lower()
+if "hello jarvis" in  q:
+    query = q.replace("hello jarvis", "")
+else: 
+    query = q
+if  "open youtube" in query:
+    webbrowser.open("www.youtube.com")
+elif "open google" in query:
+    webbrowser.open("www.google.com")
+elif "search for" and "youtube" in query:
+    s1=query.replace('search for',"")
+    s2=s1.replace('in youtube',"")
+    webbrowser.open(f"www.youtube.com/results?search_query={s2}")
+elif "search for" and "google" in query:
+    s1=query.replace('search for',"")
+    s2=s1.replace('in google',"")
+    webbrowser.open(f"www.google.com/search?q={s2}")
+elif "time" in query:
+    time = datetime.datetime.now()
+    speak(time.strftime("Sir the time is %H %M"))
+elif "date" in query:
+    time = datetime.datetime.now()
+    speak(time.strftime("Sir Today's date is %d %m %y"))
+elif "play music" or "play the music" in query:
+    music_dir =  "C:\\Users\\anike\\Music\\sound"
+    songs = os.listdir(music_dir)
+    ran= random.randint(0,4)
+    os.startfile(os.path.join(music_dir,songs[ran]))
+
